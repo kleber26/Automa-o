@@ -1,0 +1,82 @@
+/*
+Nome: Kleber Lauton
+Data: 17/08/2017
+
+- Este código tem como funçao entrar no site dos correios e rastrear um objeto por um número localizado no excel.
+- O site dos correios busca apenas um objeto por vez, mas o código pode facilmente ser alterado para inserir vários valores,
+  de acordo com a necessidade de cada um.
+*/
+package Rastreamento_Correios;
+
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+
+public class Rastreio {
+
+	public static void main (String[] args) throws Exception{		//Obs: Não esquecer o "throws exception"
+		
+		//1° PASSO: Instanciar o site dos correios com o WebDriver
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\604514\\eclipse-workspace\\selenium\\chromedriver.exe");
+		WebDriver wb = new ChromeDriver(); 
+		
+		wb.manage().window().maximize();
+		wb.get("http://www2.correios.com.br/sistemas/rastreamento/");
+		
+		//2° PASSO: Criar um Array List  que receba os dados da planilha do Excel.
+		ArrayList <String> lista = LerExcel(0);		// Cria o Array List "lista" com os dados do Excel. Precisamos enviar para a classe "LerExcel" a coluna que vamos pegar os dados (neste caso, a coluna 0).
+		
+		
+									// ** 3° passo na função abaixo da main ** //
+		
+		
+		//10° PASSO: Para inserir todos os dados coletados, criar um loop que vá de 0 até o tamanho do array.
+		for(int i=0;i<lista.size();i++) {
+			wb.findElement(By.id("objetos")).sendKeys(lista.get(i));	//A função "get" está dando um sendkeys no valor "i" do array "lista". 
+			wb.findElement(By.id("btnPesq")).click();			
+		}
+		
+	}												// ** Fim da main**
+	
+	
+	//**************************************************************************************************************//
+	
+	
+	//OBS PARA A FUNÇÃO "readExcelData" --- Em caso de erro ao executar, pode ser devido à versão do Excel. Neste caso, trocar todos os comandos iniciados por "XSSF" por "HSSF".
+	public static ArrayList<String> LerExcel(int colNo) throws Exception {		//Obs: Não esquecer o "throws exception"
+		
+		//3° PASSO: Comando para localizar o caminho do arquivo Excel.
+		FileInputStream fis=new FileInputStream("C:\\Users\\604514\\Desktop\\RASTREIO.xlsx");
+		
+		//4° PASSO: Comando para criar a variável "wb" do tipo WorkBook. Ela recebe as informações do Excel.
+		XSSFWorkbook wb = new XSSFWorkbook(fis);		
+
+		//5° PASSO: Comando para informar o nome da Aba em que os dados estão.
+		XSSFSheet aba=wb.getSheet("Sheet1");		//Variável "aba" recebe os dados da aba do Excel.
+		
+		//6° PASSO: Gerar o Iterator
+		Iterator<Row> IteratorDeLinha = aba.iterator();	//Cria a variável "IteratorDeLinha" com os dados da variável "aba". O interator serve para acessar e manusear os elementos da variável "IteratorDeLinha". Precisa ser instanciada desta forma.
+		
+		//7º PASSO: O valor que eu quero buscar na planilha Excel está na segunda linha. Para que o código não comece a ler os dados pela primeira linha, damos um ".next()" no iterator para que ele comece na linha 2.
+		IteratorDeLinha.next();	//pula primeira linha
+	
+		//8º PASSO: Instanciar a variável "list" do tipo ArrayList.
+		ArrayList<String> list = new ArrayList<String>();
+		
+		//9° PASSO: Usar um loop para adicionar todos os dados da coluna do excel no Array "list".
+		while(IteratorDeLinha.hasNext()) {		//o while continuará o loop enquanto houver uma célula preenchida.
+			list.add(IteratorDeLinha.next().getCell(colNo).getStringCellValue());		//adiciona à variável "list" o conteúdo de cada célula do excel. Dentro de "getCell" colocamos a variável que a função recebe da main (que é a coluna do excel).
+		}
+		
+		System.out.println(list);
+		return list;		// Retorna para a função principal o array "list" com todos os dados do excel.
+	}
+	
+}
