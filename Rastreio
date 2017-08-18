@@ -5,6 +5,11 @@ Data: 17/08/2017
 - Este código tem como funçao entrar no site dos correios e rastrear um objeto por um número localizado no excel.
 - O site dos correios busca apenas um objeto por vez, mas o código pode facilmente ser alterado para inserir vários valores,
   de acordo com a necessidade de cada um.
+- É necessário baixar o arquivo excel "RASTREIO". NÃO ESQUEÇA DE ALTERAR O CAMINHO DO ARQUIVO NO 3° PASSO.
+  
+  ATENÇÃO: Baixar as bibliotecas "Apache POI" no link abaixo (Windows). 
+  https://www.apache.org/dyn/closer.lua/poi/dev/bin/poi-bin-3.17-beta1-20170701.zip
+  Importar todas os arquivos .jar da pasta raiz que foi baixada. Importar também os da pasta "lib" e "ooxml-lib".
 */
 package Rastreamento_Correios;
 
